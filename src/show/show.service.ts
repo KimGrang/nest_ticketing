@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
-import { CreateShowDto } from './dto/create-show.dto';
-import { UpdateShowDto } from './dto/update-show.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateShowDto } from './dtos/create-show.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Show } from './entities/show.entity';
+import { Like, Repository } from 'typeorm';
+import { FindAllShowDto } from './dtos/find-all-show.dto';
 
 @Injectable()
 export class ShowService {
-  create(createShowDto: CreateShowDto) {
-    return 'This action adds a new show';
+  constructor(
+    @InjectRepository(Show) private readonly showReporitory: Repository<Show>,
+  ) {}
+
+  async create(createShowDto: CreateShowDto) {
+    const { schedules, seats, ...restOfShow } = createShowDto;
+
+    const existedShow = await this.showReporitory.findOneBy({
+      title: createShowDto.title,
+    });
+
+    if (existedShow) {
+      throw new BadRequestException('이미 사용 중인 공연명입니다.');
+    }
+
+    const show = await this.showReporitory.save({
+      ...restOfShow,
+      schedules: schedules.map((schedule) => ({
+        ...schedule,
+        seat: {
+          availableSeats: seats,
+          totalSeats: seats,
+        },
+      })),
+    });
+
+    return show;
   }
 
-  findAll() {
-    return `This action returns all show`;
+  async findAll({ keyword, category }: FindAllShowDto) {
+    const shows = await this.showReporitory.find({
+      where: {
+        ...(keyword && { title: Like(`%${keyword}%`) }),
+        ...(category && { category }),
+      },
+    });
+
+    return shows;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} show`;
-  }
+  async findOne(id: number) {
+    const show = await this.showReporitory.findOne({
+      where: { id },
+      relations: {
+        schedules: {
+          seat: true,
+        },
+      },
+    });
 
-  update(id: number, updateShowDto: UpdateShowDto) {
-    return `This action updates a #${id} show`;
-  }
+    if (!show) {
+      throw new NotFoundException('공연을 찾을 수 없습니다.');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} show`;
+    return show;
   }
 }
