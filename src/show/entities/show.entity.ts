@@ -14,8 +14,8 @@ export class Show {
   @Column({ type: 'text', nullable: false })
   description: string;
 
-  @Column({ type: 'varchar', array: true, nullable: false })
-  dates: Date[];
+  @Column({ type: 'varchar', nullable: false })
+  dates: string[];
 
   @Column({ type: 'varchar', nullable: false })
   place: string;
@@ -23,7 +23,7 @@ export class Show {
   @Column({ type: 'text', nullable: false })
   seatInformation: string;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
 
   @Column({ type: 'varchar', nullable: true })

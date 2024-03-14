@@ -27,7 +27,7 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.User })
   role: Role;
 
-  @Column({ type: 'number', nullable: false, default: 0 })
+  @Column({ type: 'int', nullable: false, default: 0 })
   point: number;
 
   @OneToMany(() => Ticket, (ticket) => ticket.user)

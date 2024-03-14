@@ -37,35 +37,35 @@ export class ShowService {
       throw new BadRequestException('No data was provided.');
     }
 
-    const createShowPromises = data.map(async (data) => {
-      // Check required fields
+    const createShowPromises = data.map(async (dataItem) => {
       if (
-        !data.name ||
-        !data.description ||
-        !data.dates ||
-        !data.place ||
-        !data.seatInformation ||
-        !data.price ||
-        !data.image ||
-        !data.category
+        !dataItem.name ||
+        !dataItem.description ||
+        !dataItem.dates ||
+        !dataItem.place ||
+        !dataItem.seatInformation ||
+        !dataItem.price ||
+        !dataItem.image ||
+        !dataItem.category
       ) {
         throw new BadRequestException('Missing item exists.');
       }
 
       const newShow = this.showRepository.create({
-        name: data.name,
-        description: data.description,
-        dates: data.dates,
-        place: data.place,
-        seatInformation: data.seatInformation, // Corrected typo
-        price: data.price,
-        category: data.category,
-        image: data.image || null,
+        name: dataItem.name,
+        description: dataItem.description,
+        dates: dataItem.dates,
+        place: dataItem.place,
+        seatInformation: dataItem.seatInformation,
+        price: dataItem.price,
+        category: dataItem.category,
+        image: dataItem.image || null,
       });
 
       await this.showRepository.save(newShow);
       return newShow;
     });
+    await Promise.all(createShowPromises);
   }
 
   async update(id: number, updateShowDto: UpdateShowDto) {

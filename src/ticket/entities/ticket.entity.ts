@@ -10,7 +10,7 @@ import { Show } from '../../show/entities/show.entity';
 import { User } from '../../user/entities/user.entity';
 
 @Entity({
-  name: 'support_messages',
+  name: 'tickets',
 })
 export class Ticket {
   @PrimaryGeneratedColumn()
