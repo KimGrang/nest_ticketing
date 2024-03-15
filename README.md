@@ -1,3 +1,6 @@
+git clone 수준의 상태입니다. 
+이번 주말동안 코드 보면서 새로 만들어볼 예정입니다.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
